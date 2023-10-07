@@ -7,6 +7,10 @@ const postSchema = new mongoose.Schema({
   author: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   lastSeenTime: { type: Date },
+  imageUrl: {
+    type: [String], 
+    default: [],   
+  },
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,3 +20,7 @@ const postSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Post', postSchema);
+
+
+
+

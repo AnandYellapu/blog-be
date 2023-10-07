@@ -6,9 +6,15 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   // role: { type: String, enum: ['user', 'admin'], default: 'admin' },
-  isAdmin: {
+ isAdmin: {
     type: Boolean,
-    default: false, // Assuming new users are not admin by default
+    default: false, 
+  },
+  resetToken: {
+    type: String,
+  },
+  resetTokenExpiration: {
+    type: Date,
   },
 });
 

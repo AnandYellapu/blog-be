@@ -1,8 +1,6 @@
-
-
-
-// controllers/postsController.js
+const verifyToken = require('../middleware/auth');
 const Post = require('../models/Post');
+
 
 const getAllPosts = async (req, res) => {
   try {
@@ -13,9 +11,6 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-
-
-
 const getPostById = async (req, res) => {
   const { id } = req.params;
 
@@ -25,7 +20,6 @@ const getPostById = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Update lastSeenTime when the post is viewed
     post.lastSeenTime = new Date();
     await post.save();
 
@@ -36,11 +30,10 @@ const getPostById = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  const { title, content, author } = req.body;
+  const { title, content, author, imageUrl } = req.body;
 
   try {
-    const newPost = new Post({ title, content, author });
-    // createdAt will be automatically set to the current date and time
+    const newPost = new Post({ title, content, author, imageUrl });
     await newPost.save();
     res.status(201).json(newPost);
   } catch (err) {
@@ -51,10 +44,10 @@ const createPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, imageUrl } = req.body;
 
   try {
-    const post = await Post.findByIdAndUpdate(id, { title, content }, { new: true });
+    const post = await Post.findByIdAndUpdate(id, { title, content, imageUrl }, { new: true });
 
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
@@ -69,16 +62,29 @@ const updatePost = async (req, res) => {
 const deletePost = async (req, res) => {
   const { id } = req.params;
 
-  try {
+try {
+
+  verifyToken(req, res, async () => {
+    const user = req.user;
+
+    // Check if the user is an admin
+    if (user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+   
     const post = await Post.findByIdAndDelete(id);
+    console.log('Post deleted:', post);
+
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
     res.json({ message: 'Post deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+  });
+} catch (err) {
+  console.error('Error deleting post:', err);
+  res.status(500).json({ message: err.message });
+ }
 };
 
 module.exports = {
