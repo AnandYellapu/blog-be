@@ -2,7 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const generateResetToken = require('../utils/generateReseToken');
+const generateResetToken = require('../utils/generateResetToken');
 
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -57,10 +57,6 @@ const loginUser = async (req, res) => {
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-
-      // Log whether the user is an admin or not using the 'admin' field
-      // console.log(`User ${email} logged in. Admin: ${user.isAdmin}`);
-      
       res.json({ token });
     });
   } catch (err) {

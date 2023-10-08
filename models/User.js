@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   // role: { type: String, enum: ['user', 'admin'], default: 'admin' },
  isAdmin: {
     type: Boolean,
-    default: false, 
+    default: true, 
   },
   resetToken: {
     type: String,
